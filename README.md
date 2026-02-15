@@ -1,210 +1,264 @@
 # Cloud Native Task Platform
 
-A cloud-native task management platform built with FastAPI, Docker, and Docker Compose. This platform provides a scalable solution for managing and processing tasks in a distributed environment.
+A cloud-native task management platform built with **FastAPI**, **PostgreSQL**, **Redis**, and **Docker**.
+Designed to demonstrate scalable architecture patterns, background processing, and containerized deployment.
 
-## Architecture
+---
 
-The platform consists of the following components:
+## Tech Stack
 
-- **API Service**: FastAPI-based REST API for task management
-- **Worker Service**: Background task processing service
-- **PostgreSQL**: Primary database for task storage
-- **Redis**: Caching and message queuing
-- **Docker Compose**: Container orchestration
+* Python 3.11
+* FastAPI
+* SQLAlchemy
+* Pydantic
+* PostgreSQL
+* Redis
+* Docker
+* Docker Compose
 
-## Features
+---
 
-- ✅ RESTful API for task CRUD operations
-- ✅ Background task processing
-- ✅ Containerized deployment
-- ✅ Health checks and monitoring
-- ✅ Scalable worker architecture
-- ✅ Database persistence
-- ✅ Docker Compose orchestration
+## Architecture Overview
+
+The platform is composed of:
+
+* **API Service** – RESTful interface for task management
+* **Worker Service** – Background task processor
+* **PostgreSQL** – Persistent task storage
+* **Redis** – Caching and task coordination
+* **Docker Compose** – Multi-container orchestration
+
+### Flow
+
+Client → API → PostgreSQL
+       → Redis → Worker
+
+---
+
+## Key Features
+
+* RESTful API for task CRUD operations
+* Background task execution
+* Stateless API design
+* Scalable worker architecture
+* Containerized services
+* Health check endpoints
+* Database persistence
+* Service isolation
+
+---
 
 ## Project Structure
 
 ```
 .
 ├── api/
-│   ├── main.py          # FastAPI application entry point
-│   ├── routes.py        # API endpoints
-│   ├── database.py      # Database configuration
-│   └── models.py        # Pydantic and SQLAlchemy models
+│   ├── main.py
+│   ├── routes.py
+│   ├── database.py
+│   └── models.py
 ├── worker/
-│   └── worker.py        # Background task processor
-├── requirements.txt     # Python dependencies
-├── Dockerfile.api       # API service Dockerfile
-├── Dockerfile.worker    # Worker service Dockerfile
-├── docker-compose.yml   # Container orchestration
-└── README.md           # This file
+│   └── worker.py
+├── requirements.txt
+├── Dockerfile.api
+├── Dockerfile.worker
+├── docker-compose.yml
+└── README.md
 ```
+
+---
 
 ## Quick Start
 
 ### Prerequisites
 
-- Docker
-- Docker Compose
-- Python 3.11+ (for local development)
+* Docker
+* Docker Compose
+* Python 3.11+ (for local development)
 
-### Local Development
+---
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd cloud-native-task-platform
-   ```
+## Running Locally (Development Mode)
 
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. Clone repository
 
-3. **Run the API locally**
-   ```bash
-   cd api
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
-   ```
+```bash
+git clone <repository-url>
+cd cloud-native-task-platform
+```
 
-4. **Run the worker locally**
-   ```bash
-   cd worker
-   python worker.py
-   ```
+### 2. Install dependencies
 
-### Docker Deployment
+```bash
+pip install -r requirements.txt
+```
 
-1. **Build and start all services**
-   ```bash
-   docker-compose up -d
-   ```
+### 3. Run API
 
-2. **View logs**
-   ```bash
-   docker-compose logs -f
-   ```
+```bash
+cd api
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-3. **Stop services**
-   ```bash
-   docker-compose down
-   ```
+### 4. Run Worker
+
+```bash
+cd worker
+python worker.py
+```
+
+---
+
+## Running with Docker (Recommended)
+
+### Start services
+
+```bash
+docker-compose up -d
+```
+
+### View logs
+
+```bash
+docker-compose logs -f
+```
+
+### Stop services
+
+```bash
+docker-compose down
+```
+
+---
 
 ## API Endpoints
 
 ### Task Management
 
-- `GET /api/v1/tasks` - Get all tasks
-- `GET /api/v1/tasks/{task_id}` - Get specific task
-- `POST /api/v1/tasks` - Create new task
-- `PUT /api/v1/tasks/{task_id}` - Update task
-- `DELETE /api/v1/tasks/{task_id}` - Delete task
-- `POST /api/v1/tasks/{task_id}/execute` - Execute task
+* `GET /api/v1/tasks`
+* `GET /api/v1/tasks/{task_id}`
+* `POST /api/v1/tasks`
+* `PUT /api/v1/tasks/{task_id}`
+* `DELETE /api/v1/tasks/{task_id}`
+* `POST /api/v1/tasks/{task_id}/execute`
 
 ### Health Check
 
-- `GET /health` - API health check
-- `GET /` - Root endpoint
+* `GET /health`
+* `GET /`
+
+---
 
 ## Environment Variables
 
 ### API Service
 
-- `DATABASE_URL` - Database connection string
-- `REDIS_URL` - Redis connection string
-- `WORKER_COUNT` - Number of worker instances
+* `DATABASE_URL`
+* `REDIS_URL`
+* `WORKER_COUNT`
 
 ### Worker Service
 
-- `API_URL` - API service URL
-- `WORKER_ID` - Unique worker identifier
-- `POLL_INTERVAL` - Task polling interval in seconds
-- `REDIS_URL` - Redis connection string
+* `API_URL`
+* `WORKER_ID`
+* `POLL_INTERVAL`
+* `REDIS_URL`
 
-## Configuration
+---
 
-### Database
+## Default Configuration
 
-The platform uses PostgreSQL as the primary database. Default configuration:
+### PostgreSQL
 
-- Database: `task_platform`
-- User: `task_user`
-- Password: `task_password`
-- Port: `5432`
+* Database: `task_platform`
+* User: `task_user`
+* Password: `task_password`
+* Port: `5432`
 
 ### Redis
 
-Redis is used for caching and message queuing. Default configuration:
+* Port: `6379`
 
-- Port: `6379`
+---
 
-## Development
+## Scalability Design
 
-### Adding New Features
+* Stateless API
+* Horizontal worker scaling
+* Redis-based coordination
+* Container-ready services
+* Service isolation
+* Infrastructure portability
 
-1. Update the API models in `api/models.py`
-2. Add new endpoints in `api/routes.py`
-3. Update the worker logic in `worker/worker.py` if needed
-4. Update `requirements.txt` for new dependencies
-5. Test locally before containerizing
+---
 
-### Testing
+## Monitoring & Health Checks
 
-```bash
-# Run API tests
-cd api
-pytest
+Each service exposes health validation:
 
-# Run worker tests
-cd worker
-pytest
-```
+* API → `/health`
+* PostgreSQL → connection check
+* Redis → ping validation
+* Worker → process heartbeat
 
-## Monitoring
-
-### Health Checks
-
-Each service includes health checks:
-
-- **API**: HTTP endpoint `/health`
-- **Database**: PostgreSQL connection check
-- **Redis**: Redis ping command
-- **Worker**: Python import check
-
-### Logs
-
-Monitor service logs with:
+Logs:
 
 ```bash
 docker-compose logs -f [service-name]
 ```
 
-## Production Deployment
+---
 
-For production deployment:
+## Production Considerations
 
-1. Update environment variables with production values
-2. Configure proper secrets management
-3. Set up monitoring and alerting
-4. Configure load balancing
-5. Set up backup strategies
+For production environments:
 
-## Contributing
+* Use managed PostgreSQL (e.g., RDS)
+* Use managed Redis (e.g., ElastiCache)
+* Deploy containers to Kubernetes
+* Configure CI/CD pipeline
+* Enable centralized logging
+* Implement observability (Prometheus + Grafana)
+* Configure secret management
+* Add autoscaling policies
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+---
+
+## Testing
+
+```bash
+cd api
+pytest
+
+cd worker
+pytest
+```
+
+---
+
+## Purpose
+
+This project was created to demonstrate:
+
+* Cloud-native design principles
+* Background task processing patterns
+* Containerized microservice architecture
+* Distributed system fundamentals
+* Scalability-oriented backend design
+
+---
+
+## Roadmap (Next Improvements)
+
+* Add authentication (JWT)
+* Add OpenAPI documentation customization
+* Add CI pipeline (GitHub Actions)
+* Add integration tests
+* Add metrics endpoint
+* Add Kubernetes deployment manifests
+
+---
 
 ## License
 
-This project is licensed under the MIT License.
-
-## Support
-
-For support and questions:
-
-- Create an issue in the repository
-- Check the documentation
-- Review the code examples
+MIT License
