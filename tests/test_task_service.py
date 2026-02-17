@@ -4,10 +4,7 @@ from app.schemas.task import TaskCreate
 
 def test_create_task_service(db):
 
-    task_data = TaskCreate(
-        title="Service Task",
-        description="Testing service"
-    )
+    task_data = TaskCreate(title="Service Task", description="Testing service")
 
     task = create_task(db, task_data)
 

@@ -1,264 +1,267 @@
 # Cloud Native Task Platform
 
-A cloud-native task management platform built with **FastAPI**, **PostgreSQL**, **Redis**, and **Docker**.
-Designed to demonstrate scalable architecture patterns, background processing, and containerized deployment.
+Production-ready cloud-native task management platform built with **FastAPI**, **PostgreSQL**, **Redis**, **Docker**, and full **Observability + CI/CD** stack.
+
+Designed to demonstrate scalable backend architecture, background processing, DevOps practices, and SRE fundamentals.
 
 ---
 
-## Tech Stack
+# Tech Stack
 
-* Python 3.11
-* FastAPI
-* SQLAlchemy
-* Pydantic
-* PostgreSQL
-* Redis
-* Docker
-* Docker Compose
-
----
-
-## Architecture Overview
-
-The platform is composed of:
-
-* **API Service** – RESTful interface for task management
-* **Worker Service** – Background task processor
-* **PostgreSQL** – Persistent task storage
-* **Redis** – Caching and task coordination
-* **Docker Compose** – Multi-container orchestration
-
-### Flow
-
-Client → API → PostgreSQL
-       → Redis → Worker
+- Python 3.11
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- PostgreSQL
+- Redis
+- Prometheus
+- Grafana
+- Docker & Docker Compose
+- GitHub Actions (CI)
 
 ---
 
-## Key Features
+# Architecture
 
-* RESTful API for task CRUD operations
-* Background task execution
-* Stateless API design
-* Scalable worker architecture
-* Containerized services
-* Health check endpoints
-* Database persistence
-* Service isolation
+## Services
+
+- **API** – RESTful task management service
+- **Worker** – Background task processor
+- **PostgreSQL** – Persistent storage
+- **Redis** – Task coordination & messaging
+- **Prometheus** – Metrics collection
+- **Grafana** – Metrics visualization
+- **GitHub Actions** – CI pipeline
+
+## Flow
+
+Client → API → PostgreSQL  
+       → Redis → Worker  
+Prometheus → Scrapes `/metrics`  
+Grafana → Visualizes metrics  
 
 ---
 
-## Project Structure
+# Observability (SRE Ready)
+
+## Metrics
+
+### Technical Metrics
+- `http_requests_total`
+- `http_request_duration_seconds`
+- `http_errors_total`
+
+### Business Metrics
+- `tasks_created_total`
+- `tasks_in_progress`
+
+## Golden Signals Dashboard
+
+- Requests per Second (RPS)
+- Error Rate
+- Latency (p95)
+- Task Creation Rate
+
+Grafana dashboards are:
+- Automatically provisioned
+- Version controlled
+- Persisted via Docker volume
+
+---
+
+# Alerts
+
+Configured in Prometheus:
+
+- High Error Rate
+- High Latency (p95)
+- API Down detection
+
+---
+
+# CI Pipeline
+
+GitHub Actions workflow includes:
+
+- Ruff (lint)
+- Black (format validation)
+- Pytest
+- Minimum 80% coverage enforcement
+- Docker image build validation
+
+Pull Requests are blocked if any check fails.
+
+---
+
+# Project Structure
 
 ```
+
 .
-├── api/
-│   ├── main.py
-│   ├── routes.py
-│   ├── database.py
-│   └── models.py
-├── worker/
-│   └── worker.py
-├── requirements.txt
+├── app/
+│   ├── api/
+│   ├── models/
+│   ├── services/
+│   ├── worker/
+│   ├── observability/
+│   └── main.py
+│
+├── monitoring/
+│   ├── prometheus.yml
+│   ├── alerts.yml
+│   └── grafana/
+│
 ├── Dockerfile.api
 ├── Dockerfile.worker
 ├── docker-compose.yml
-└── README.md
-```
+├── requirements.txt
+├── requirements-dev.txt
+└── .github/workflows/ci.yml
+
+````
 
 ---
 
-## Quick Start
+# Quick Start
 
-### Prerequisites
-
-* Docker
-* Docker Compose
-* Python 3.11+ (for local development)
-
----
-
-## Running Locally (Development Mode)
-
-### 1. Clone repository
+## 1. Clone
 
 ```bash
 git clone <repository-url>
 cd cloud-native-task-platform
-```
+````
 
-### 2. Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Run API
+## 2. Run Full Stack
 
 ```bash
-cd api
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-### 4. Run Worker
-
-```bash
-cd worker
-python worker.py
+docker compose up --build
 ```
 
 ---
 
-## Running with Docker (Recommended)
+# Access Services
 
-### Start services
+API
 
-```bash
-docker-compose up -d
+```
+http://localhost:8000
 ```
 
-### View logs
+Prometheus
 
-```bash
-docker-compose logs -f
+```
+http://localhost:9090
 ```
 
-### Stop services
+Grafana
 
-```bash
-docker-compose down
+```
+http://localhost:3000
+```
+
+Default login:
+
+```
+admin / admin
 ```
 
 ---
 
-## API Endpoints
+# API Endpoints
 
-### Task Management
+## Tasks
 
 * `GET /api/v1/tasks`
-* `GET /api/v1/tasks/{task_id}`
 * `POST /api/v1/tasks`
-* `PUT /api/v1/tasks/{task_id}`
-* `DELETE /api/v1/tasks/{task_id}`
-* `POST /api/v1/tasks/{task_id}/execute`
+* `GET /api/v1/tasks/{id}`
+* `PUT /api/v1/tasks/{id}`
+* `DELETE /api/v1/tasks/{id}`
 
-### Health Check
+## Health
 
 * `GET /health`
-* `GET /`
+* `GET /health/live`
+* `GET /health/ready`
 
 ---
 
-## Environment Variables
+# Environment Variables
 
-### API Service
+## API
 
 * `DATABASE_URL`
 * `REDIS_URL`
 * `WORKER_COUNT`
 
-### Worker Service
+## Worker
 
 * `API_URL`
+* `REDIS_URL`
 * `WORKER_ID`
 * `POLL_INTERVAL`
-* `REDIS_URL`
 
 ---
 
-## Default Configuration
-
-### PostgreSQL
-
-* Database: `task_platform`
-* User: `task_user`
-* Password: `task_password`
-* Port: `5432`
-
-### Redis
-
-* Port: `6379`
-
----
-
-## Scalability Design
+# Production Readiness Features
 
 * Stateless API
 * Horizontal worker scaling
-* Redis-based coordination
-* Container-ready services
-* Service isolation
-* Infrastructure portability
+* Redis coordination
+* Dockerized infrastructure
+* CI quality gate
+* Observability stack
+* Alert rules
+* Dashboard as code
+* Health checks
+* Structured logging
+* Request tracing (request_id)
 
 ---
 
-## Monitoring & Health Checks
+# Scalability Design
 
-Each service exposes health validation:
+* Horizontal API scaling
+* Horizontal worker scaling
+* Container-native architecture
+* Metrics-driven monitoring
+* Infrastructure as code mindset
 
-* API → `/health`
-* PostgreSQL → connection check
-* Redis → ping validation
-* Worker → process heartbeat
+---
 
-Logs:
+# Testing
 
 ```bash
-docker-compose logs -f [service-name]
-```
-
----
-
-## Production Considerations
-
-For production environments:
-
-* Use managed PostgreSQL (e.g., RDS)
-* Use managed Redis (e.g., ElastiCache)
-* Deploy containers to Kubernetes
-* Configure CI/CD pipeline
-* Enable centralized logging
-* Implement observability (Prometheus + Grafana)
-* Configure secret management
-* Add autoscaling policies
-
----
-
-## Testing
-
-```bash
-cd api
-pytest
-
-cd worker
 pytest
 ```
 
----
-
-## Purpose
-
-This project was created to demonstrate:
-
-* Cloud-native design principles
-* Background task processing patterns
-* Containerized microservice architecture
-* Distributed system fundamentals
-* Scalability-oriented backend design
+Coverage must remain ≥ 80%.
 
 ---
 
-## Roadmap (Next Improvements)
+# Roadmap
 
-* Add authentication (JWT)
-* Add OpenAPI documentation customization
-* Add CI pipeline (GitHub Actions)
-* Add integration tests
-* Add metrics endpoint
-* Add Kubernetes deployment manifests
+* Alertmanager integration
+* Slack notifications
+* SLO 99.9% + Error Budget
+* Burn rate alerts
+* Distributed tracing
+* Kubernetes manifests
+* Canary deployments
 
 ---
 
-## License
+# Purpose
 
-MIT License
+This project demonstrates:
+
+* Cloud-native backend architecture
+* Background processing patterns
+* Observability best practices
+* DevOps pipeline implementation
+* SRE monitoring fundamentals
+
+---
+
+# License
+
+MIT

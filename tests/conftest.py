@@ -29,6 +29,7 @@ TestingSessionLocal = sessionmaker(
 # Override do get_db para usar o banco de teste
 # ------------------------------------------------------------------
 
+
 def override_get_db():
     db = TestingSessionLocal()
     try:
@@ -36,11 +37,13 @@ def override_get_db():
     finally:
         db.close()
 
+
 app.dependency_overrides[get_db] = override_get_db
 
 # ------------------------------------------------------------------
 # Fixtures
 # ------------------------------------------------------------------
+
 
 @pytest.fixture(scope="session", autouse=True)
 def create_test_database():

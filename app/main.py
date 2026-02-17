@@ -12,7 +12,6 @@ from app.core.database import engine, Base
 # Importa models para registrar no metadata
 from app.models import task  # noqa: F401
 
-
 # ---------------------------------
 # Logging
 # ---------------------------------
@@ -57,10 +56,8 @@ app.add_middleware(ObservabilityMiddleware)
 # ---------------------------------
 # Task Endpoints
 # ---------------------------------
-app.include_router(
-    tasks.router,
-    prefix="/api/v1"
-)
+app.include_router(tasks.router, prefix="/api/v1")
+
 
 # ---------------------------------
 # Health Endpoints
@@ -85,7 +82,4 @@ async def health():
 # ---------------------------------
 @app.get("/")
 async def root():
-    return {
-        "service": "cloud-native-task-platform",
-        "version": "1.0.0"
-    }
+    return {"service": "cloud-native-task-platform", "version": "1.0.0"}

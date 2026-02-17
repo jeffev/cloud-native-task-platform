@@ -3,8 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///./test.db"  # fallback para testes locais
+    "DATABASE_URL", "sqlite:///./test.db"  # fallback para testes locais
 )
 
 # Configuração especial para SQLite (necessária em testes)

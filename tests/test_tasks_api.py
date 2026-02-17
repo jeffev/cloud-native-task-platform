@@ -1,11 +1,7 @@
 def test_create_task(client):
 
     response = client.post(
-        "/api/v1/tasks/",
-        json={
-            "title": "Test Task",
-            "description": "Testing"
-        }
+        "/api/v1/tasks/", json={"title": "Test Task", "description": "Testing"}
     )
 
     assert response.status_code == 200
@@ -17,12 +13,7 @@ def test_create_task(client):
 
 def test_list_tasks(client):
 
-    client.post(
-        "/api/v1/tasks/",
-        json={
-            "title": "Another Task"
-        }
-    )
+    client.post("/api/v1/tasks/", json={"title": "Another Task"})
 
     response = client.get("/api/v1/tasks/")
     assert response.status_code == 200

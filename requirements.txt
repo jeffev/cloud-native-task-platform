@@ -11,3 +11,7 @@ pytest-asyncio
 psycopg2-binary
 prometheus-fastapi-instrumentator
 structlog
+ruff
+black
+pytest
+pytest-cov
