@@ -1,0 +1,39 @@
+groups:
+  - name: api-alerts
+    rules:
+
+      # -----------------------------------
+      # High Error Rate
+      # -----------------------------------
+      - alert: HighErrorRate
+        expr: rate(http_errors_total[2m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High HTTP error rate detected"
+          description: "More than 0.1 errors/sec in the last 2 minutes."
+
+      # -----------------------------------
+      # High Latency (p95 > 1s)
+      # -----------------------------------
+      - alert: HighLatencyP95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency"
+          description: "p95 latency above 1 second for 2 minutes."
+
+      # -----------------------------------
+      # API Down
+      # -----------------------------------
+      - alert: APIDown
+        expr: up{job="task_api"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "API is down"
+          description: "Prometheus cannot scrape the API."
