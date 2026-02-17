@@ -106,6 +106,10 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
     networks:
       - task_network
     depends_on:
@@ -113,6 +117,7 @@ services:
 
 volumes:
   postgres_data:
+  grafana_data:
 
 networks:
   task_network:

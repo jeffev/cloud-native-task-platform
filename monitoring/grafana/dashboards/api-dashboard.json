@@ -1,0 +1,46 @@
+{
+  "title": "Task API - Golden Signals",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Requests per Second",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[1m])",
+          "legendFormat": "{{method}} {{endpoint}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Error Rate",
+      "targets": [
+        {
+          "expr": "rate(http_errors_total[1m])"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency p95",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Tasks Created per Minute",
+      "targets": [
+        {
+          "expr": "rate(tasks_created_total[1m])"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "5s"
+}
