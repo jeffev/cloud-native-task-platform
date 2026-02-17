@@ -8,7 +8,7 @@ from app.core.database import Base, get_db
 from app.main import app
 
 # ------------------------------------------------------------------
-# Configuração do banco de teste (SQLite em memória)
+# Banco SQLite em memória (compartilhado)
 # ------------------------------------------------------------------
 
 SQLALCHEMY_DATABASE_URL = "sqlite://"
@@ -16,7 +16,7 @@ SQLALCHEMY_DATABASE_URL = "sqlite://"
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     connect_args={"check_same_thread": False},
-    poolclass=StaticPool,  # mantém o mesmo banco em memória
+    poolclass=StaticPool,
 )
 
 TestingSessionLocal = sessionmaker(
@@ -26,22 +26,7 @@ TestingSessionLocal = sessionmaker(
 )
 
 # ------------------------------------------------------------------
-# Override do get_db para usar o banco de teste
-# ------------------------------------------------------------------
-
-
-def override_get_db():
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-app.dependency_overrides[get_db] = override_get_db
-
-# ------------------------------------------------------------------
-# Fixtures
+# Cria tabelas uma única vez
 # ------------------------------------------------------------------
 
 
@@ -52,6 +37,11 @@ def create_test_database():
     Base.metadata.drop_all(bind=engine)
 
 
+# ------------------------------------------------------------------
+# Session isolada por teste (rollback)
+# ------------------------------------------------------------------
+
+
 @pytest.fixture(scope="function")
 def db():
     connection = engine.connect()
@@ -59,14 +49,30 @@ def db():
 
     session = TestingSessionLocal(bind=connection)
 
-    yield session
+    try:
+        yield session
+    finally:
+        session.close()
+        transaction.rollback()
+        connection.close()
 
-    session.close()
-    transaction.rollback()
-    connection.close()
+
+# ------------------------------------------------------------------
+# Client usando a mesma session do teste
+# ------------------------------------------------------------------
 
 
 @pytest.fixture(scope="function")
-def client():
+def client(db):
+    def override_get_db():
+        try:
+            yield db
+        finally:
+            pass
+
+    app.dependency_overrides[get_db] = override_get_db
+
     with TestClient(app) as c:
         yield c
+
+    app.dependency_overrides.clear()
