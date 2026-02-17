@@ -1,16 +1,16 @@
-import structlog
 from contextlib import asynccontextmanager
 
+import structlog
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.api.logging_config import configure_logging
-from app.observability.middleware import ObservabilityMiddleware
 from app.api.v1.endpoints import tasks
-from app.core.database import engine, Base
+from app.core.database import Base, engine
 
 # Importa models para registrar no metadata
 from app.models import task  # noqa: F401
+from app.observability.middleware import ObservabilityMiddleware
 
 # ---------------------------------
 # Logging

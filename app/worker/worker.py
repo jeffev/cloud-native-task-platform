@@ -1,6 +1,7 @@
-import os
 import json
+import os
 import time
+
 import redis
 from redis.exceptions import RedisError
 from sqlalchemy.orm import Session

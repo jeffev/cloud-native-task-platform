@@ -1,5 +1,5 @@
-from app.services.task_service import create_task
 from app.schemas.task import TaskCreate
+from app.services.task_service import create_task
 
 
 def test_create_task_service(db):

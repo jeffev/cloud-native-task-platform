@@ -1,14 +1,14 @@
 import time
 import uuid
-import structlog
 
+import structlog
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.observability.metrics import (
+    ERROR_COUNT,
     REQUEST_COUNT,
     REQUEST_LATENCY,
-    ERROR_COUNT,
 )
 
 logger = structlog.get_logger()

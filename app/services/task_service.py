@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Session
 
 from app.models.task import Task
-from app.schemas.task import TaskCreate
-from app.worker.queue import publish_task
 from app.observability.metrics import (
     TASKS_CREATED_TOTAL,
     TASKS_IN_PROGRESS,
 )
+from app.schemas.task import TaskCreate
+from app.worker.queue import publish_task
 
 
 def create_task(db: Session, task: TaskCreate):
