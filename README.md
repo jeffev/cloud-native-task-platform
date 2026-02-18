@@ -127,7 +127,7 @@ Pull Requests are blocked if any check fails.
 ## 1. Clone
 
 ```bash
-git clone <repository-url>
+git [clone](https://github.com/jeffev/cloud-native-task-platform.git)
 cd cloud-native-task-platform
 ````
 
